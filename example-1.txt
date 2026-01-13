@@ -1,0 +1,59 @@
+First.html
+------------------------
+<html>
+<body bgcolor=yellow method=get>
+<form action=second>
+<h1>STUDENT REGISTRATION PAGE</h1><hr color="red">
+<table>
+<tr><td>Enter your idno</td><td><input type=text name=t1 size=20></td></tr>
+<tr><td>Enter your name</td><td><input type=text name=t2 size=20></td></tr>
+<tr><td>Enter your address</td><td><input type=text name=t3 size=20></td></tr>
+<tr><td>Enter your Email</td><td><input type=text name=t4 size=20></td></tr>
+<tr><td>Enter your Phoneno</td><td><input type=text name=t5 size=20></td></tr>
+<tr><td><input type=submit value=submit></td></tr>
+</table>
+</form>
+</body>
+</html>
+
+------------------------------------------------------------------------
+second.java
+-------------------------
+import java.io.*;
+import javax.servlet.*;
+import javax.servlet.annotation.WebServlet;
+
+@WebServlet("/second")
+public class second extends GenericServlet 
+{
+public void init()
+{
+	System.out.println("This is init execute for one time");
+}
+	@Override
+	public void service(ServletRequest req, ServletResponse res) throws ServletException, IOException 
+	{
+		res.setContentType("text/html");
+        PrintWriter out = res.getWriter();
+        String a=req.getParameter("t1");
+        String b=req.getParameter("t2");
+        String c=req.getParameter("t3");
+        String d=req.getParameter("t4");
+        String e=req.getParameter("t5");
+        out.println("The id is : "+a);
+        out.println("</br>");
+        out.println("The name is : "+b);
+        out.println("</br>");
+        out.println("The address is : "+c);
+        out.println("</br>");
+        out.println("The email is : "+d);
+        out.println("</br>");
+        out.println("The phoneno is : "+e);
+                
+	}
+	public void destroy()
+	{
+		System.out.println("This is destroy execute for one time");
+	}
+}
+---------------------------------------------------------------------------------------------
