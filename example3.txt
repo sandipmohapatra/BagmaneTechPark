@@ -1,0 +1,64 @@
+<html>
+<body bgcolor=yellow method=get>
+<form action=second.jsp>
+<h1>STUDENT REGISTRATION PAGE</h1><hr color="red">
+<table>
+<tr><td>Enter your idno</td><td><input type=text name=t1 size=20></td></tr>
+<tr><td>Enter your name</td><td><input type=text name=t2 size=20></td></tr>
+<tr><td>Enter your address</td><td><input type=text name=t3 size=20></td></tr>
+<tr><td>Enter your Email</td><td><input type=text name=t4 size=20></td></tr>
+<tr><td>Enter your Phoneno</td><td><input type=text name=t5 size=20></td></tr>
+<tr><td><input type=submit value=submit></td></tr>
+</table>
+</form>
+</body>
+</html>
+---------------------------------------------
+<%@page import="java.sql.*" %>
+
+<% String a=request.getParameter("t1");
+String b=request.getParameter("t2");
+String c=request.getParameter("t3");
+String d=request.getParameter("t4");
+String e=request.getParameter("t5");%>
+
+<%
+out.println("The id is : "+a);
+        out.println("</br>");
+        out.println("The name is : "+b);
+        out.println("</br>");
+        out.println("The address is : "+c);
+        out.println("</br>");
+        out.println("The email is : "+d);
+        out.println("</br>");
+        out.println("The phoneno is : "+e);%>
+        
+        <%
+        try{
+        Class.forName("com.mysql.cj.jdbc.Driver");
+        Connection con=DriverManager.getConnection( "jdbc:mysql://localhost:3306/bagmaneTechPark","root","1234");
+        PreparedStatement ps=con.prepareStatement("insert into student values(?,?,?,?,?)");
+        int x=Integer.parseInt(a);
+        ps.setInt(1,x);
+        ps.setString(2,b);
+        ps.setString(3,c);
+        ps.setString(4,d);
+        ps.setString(5,e);
+        ps.execute();
+        
+        }
+        catch(Exception ae)
+        {
+        	ae.printStackTrace();
+        }
+        
+        %>
+      -----------------------------------------------------------------------  
+        
+        
+        
+        
+        
+        
+        
+        
