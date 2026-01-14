@@ -1,0 +1,932 @@
+which asks what will happen if doStartTag() will return SKIP_PAGE.
+
+Here is an exemplary code:
+
+com.example.MyTag2.java
+view plainprint?
+Note: Text content in the code blocks is automatically word-wrapped
+
+    package com.example;  
+      
+    import javax.servlet.*;  
+    import javax.servlet.jsp.*;  
+    import javax.servlet.jsp.tagext.*;  
+    import javax.servlet.http.*;  
+    import java.io.*;  
+      
+    public class MyTag2 extends BodyTagSupport {  
+      
+        public int doStartTag() throws JspException {  
+            System.out.println("inside start tag!");  
+            return EVAL_BODY_INCLUDE;  
+        }  
+      
+        public int doAfterBody() throws JspException {  
+            System.out.println("inside after body tag!");  
+            return SKIP_BODY;  
+        }  
+      
+        public int doEndTag() throws JspException {  
+            System.out.println("inside end tag!");  
+            return EVAL_PAGE;  
+        }  
+    }  
+
+
+
+test.jsp
+view plainprint?
+Note: Text content in the code blocks is automatically word-wrapped
+
+    <%@ taglib uri="http://pedro" prefix="s" %>  
+    <% pageContext.setAttribute("myAttr", "Howdy!"); %>  
+      
+    <s:pedroTag2>${myAttr}</s:pedroTag2>  
+      
+    test!  
+
+------------
+
+This code returns Howdy! test! so it's fine. The following are the results summary:
+
+1. doStartTag returns EVAL_BODY_INCLUDE and doEndTag returns SKIP_PAGE instead of EVAL_PAGE
+Result: Howdy! (which is OK - the tag gets evaluated but the rest of the page is not processed)
+
+2. doStartTag returns SKIP_PAGE and doEndTag returns EVAL_PAGE
+Result: test! (which is quite unusual for me... the SKIP_PAGE in doStartTag makes the tag not to evaluate it's body and... that's it? No more meaning of SKIP_PAGE?)
+
+I've ran some tests and firstly I thought it's because the SKIP_PAGE might return the same integer value as SKIP_BODY which might explain the behavior shown above. It's integers and not enums so such kind of things might happen.
+
+But then again I've tested that if I return a random integer from the doStartTag() method like: 
+-------------------------
+--------------------------
+<%@ page
+language="java" 
+contentType="text/html; charset=ISO-8859-1"
+pageEncoding="ISO-8859-1" 
+import="java.sql.DriverManager,
+java.sql.Connection, 
+java.sql.PreparedStatement, 
+java.sql.ResultSet, 
+java.sql.SQLException"
+%>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<title>JSP Radio Button</title>
+</head>
+<body>
+<form>
+<h3>Select Your Favorite Cuisine :</h3>
+<p><input type="radio" name="dish" value="Indian"> Indian</input></p>
+<p><input type="radio" name="dish" value="Continental"> Continental</input></p>
+<p><input type="radio" name="dish" value="Chinese"> Chinese</input></p>
+<p><input type="radio" name="dish" value="Italian"> Italian</input></p>
+<p><input type="radio" name="dish" value="Russian"> Russian</input></p>
+<input type="submit" value="Submit">
+</form>
+<br>
+<%! 
+String driver = "com.mysql.jdbc.Driver";
+String url = "jdbc:mysql://192.168.10.13/data";
+String uid = "root";
+String psw = "root";
+Connection con;
+ResultSet rs;
+PreparedStatement ps;
+%>
+<%
+try
+{
+Class.forName(driver);
+con = DriverManager.getConnection(url,uid,psw);
+}
+catch(ClassNotFoundException cx)
+{
+out.println(cx);
+}
+String option = request.getParameter("dish");
+if(option !=(null))
+{ 
+try{
+
+String sql = "INSERT INTO cuisine(favoriteCuisine) VALUES(?)";
+ps= con.prepareStatement(sql);
+ps.setString(1, option);
+int i = ps.executeUpdate();
+if(i != 0)
+{
+out.println("Your order has been made successfully");
+}
+else
+out.println("Sorry your order can not be made try again later");
+
+%>
+<p>You Cuisine order is for 
+<%= option %></p>
+<%
+}
+catch(Exception e)
+{
+out.println(e);
+}
+finally
+{
+if(rs != null)
+{
+rs.close();
+}
+if(ps != null)
+{
+ps.close();
+}
+if(con != null)
+{
+con.close();
+}
+}
+} 
+%>
+</body>
+</html>
+-----------------------------------------------------------------------------
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+pageEncoding="ISO-8859-1"%>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<title>JSP Multiple Select Option</title>
+</head>
+<body>
+<h4>Select the color/s you like from the drop down list</h4>
+<form>
+<select name="color" multiple size="6">
+<option>Pink</option>
+<option>Orange</option>
+<option>Yellow</option>
+<option>Blue</option>
+<option>Black</option>
+<option>Brown</option>
+<option>Gray</option>
+</select>
+<p><input type="submit" value="submit"></p>
+</form>
+
+<% 
+String clrs[] = request.getParameterValues("color");
+if(clrs != null)
+{
+%>
+<p><b>You have selected the following colors</b></p>
+<ul>
+<%
+for(int i=0; i<clrs.length; i++)
+{
+%>
+<li><%=clrs[i]%></li>
+<%
+}
+%>
+</ul>
+<%
+}
+%>
+</body>
+</html>
+
+-------------------------------------------------------------------------
+
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+pageEncoding="ISO-8859-1"%>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<script type="text/javascript">
+function checkBoxValidation()
+{
+for(var i=0; i < document.form1.fruit.length; i++)
+{
+if(!document.form1.fruit[i].checked)
+{
+alert("Please Select Your favorite fruit");
+return false;
+}
+else
+{
+alert("Click OK to display your favorite fruit list");
+return true;
+}
+}
+}
+</script>
+<title>JSP Multiple Checkbox</title>
+</head>
+<body>
+<form name="form1" onsubmit="checkBoxValidation()">
+<h3>Select your favorite Fruits</h3>
+<p><input type="checkbox" name="fruit" value="Mango"/>Mango</p>
+<p><input type="checkbox" name="fruit" value="Apple"/>Apple</p>
+<p><input type="checkbox" name="fruit" value="Grapes"/>Grapes</p>
+<p><input type="checkbox" name="fruit" value="Papaya"/>Papaya</p>
+<p><input type="checkbox" name="fruit" value="Lychee"/>Lychee</p>
+<p><input type="checkbox" name="fruit" value="Pineapple"/>Pineapple</p>
+<p><input type="submit" value="submit"/>
+</form>
+<%
+String fruits[]= request.getParameterValues("fruit");
+if(fruits != null)
+{
+%>
+<h4>I likes fruit/s mostly</h4>
+<ul>
+<%
+for(int i=0; i<fruits.length; i++)
+{
+%>
+<li><%=fruits[i]%></li>
+<%
+}
+%>
+</ul>
+<%
+}
+%>
+</body>
+</html>
+---------------------------------------------------------------------------
+
+cookies creating:-
+--------------------------
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+pageEncoding="ISO-8859-1"%>
+<%@ page import="javax.servlet.http.Cookie" %>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<title>Cookies In JSP</title>
+</head>
+<body>
+<form>
+<table>
+<tr>
+<td>Enter Your Name :</td>
+<td><input type="text" name="name"/></td>
+</tr>
+<tr>
+<td>Enter Your Age :</td>
+<td><input type="text" name="age"/></td>
+</tr>
+<tr>
+<td></td><td><input type="submit" value="submit"/></td>
+</tr>
+</table>
+</form>
+<%
+String nm = request.getParameter("name");
+String ag = request.getParameter("age");
+
+if(nm != null)
+{
+String trim = ag.trim();
+int a = Integer.parseInt(ag);
+%>
+<table>
+<tr>
+<td>Name = </td> <td><%=nm %></td>
+</tr>
+<tr>
+<td>Age = </td> <td><%=a %></td>
+</tr>
+</table>
+<%
+Cookie nCookie = new Cookie("nam", nm);
+//Name cookie add to the response header
+response.addCookie(nCookie);
+}
+%>
+
+<%
+Cookie cookie = null;
+Cookie[] cookieArray = request.getCookies();
+if(cookieArray != null)
+{
+%>
+<p><b>Cookies Information</b></p>
+<%
+for(int i=0; i<cookieArray.length; i++)
+{
+cookie = cookieArray[i];
+out.println("CookieName :" + cookie.getName());
+out.println("CookieValue :" + cookie.getValue()); 
+}
+}
+else
+{
+out.println("Cookies is not added in the response");
+}
+%>
+</body>
+</html>
+
+----------------------------------------------------------------------------------------------------------------------
+cookies deleting
+---------------------------
+
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+pageEncoding="ISO-8859-1"%>
+<%@ page import="javax.servlet.http.Cookie" %>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<title>Add Cookies In JSP</title>
+</head>
+<body>
+<form>
+<table>
+<tr>
+<td>Enter Your Name :</td>
+<td><input type="text" name="name"/></td>
+</tr>
+<tr>
+<td>Enter Your Age :</td>
+<td><input type="text" name="age"/></td>
+</tr>
+<tr>
+<td></td><td><input type="submit" value="submit"/></td>
+</tr>
+</table>
+</form>
+<%
+String nm = request.getParameter("name");
+String ag = request.getParameter("age");
+
+if(nm != null)
+{
+String trim = ag.trim();
+int a = Integer.parseInt(ag);
+%>
+<table>
+<tr>
+<td>Name = </td> <td><%=nm %></td>
+</tr>
+<tr>
+<td>Age = </td> <td><%=a %></td>
+</tr>
+</table>
+<%
+Cookie nCookie = new Cookie("nam", nm);
+//Name cookie add to the response header
+response.addCookie(nCookie);
+}
+%>
+
+<%
+Cookie cookie = null;
+Cookie[] cookieArray = request.getCookies();
+if(cookieArray != null)
+{
+%>
+<p><b>Cookies Information</b></p>
+<%
+for(int i=0; i<cookieArray.length; i++)
+{
+cookie = cookieArray[i];
+out.println("CookieName : " + cookie.getName()+"<br>");
+out.println("CookieValue : " + cookie.getValue()+"<br>"); 
+}
+}
+else
+{
+out.println("Cookies is not added in the response");
+}
+%>
+</body>
+</html>
+-------------------------------------------------------------------------------------------------------------
+
+Custom Tag Tutorial JSP
+
+Custom Tag is a mechanism provided by the JSP technology that encapsulates the task that is to be repeated such as processing forms, accessing databases etc.
+
+
+
+In JSP a custom tag is a tag or element that is defined by a user or you can say in JSP language a user-defined tag or element is called a custom tag. Custom tags are collectively called a tag library into which there is a set of related custom tags are defined and holds objects which implements the tags. A JSP page which contains a custom tag is translated into a servlet, and the tag performs the operation on an object which implements the custom tag. Tag handler object implements a custom tag. There are two types of tag handler :
+
+    Simple tag handlers : It can be used only for the tags that does not use a scripting element in attribute values / tag body.
+    Classic tag handlers : It must be used for the tags that is needed to use a scripting element in attribute values / tag body.
+
+To define a custom tag you would be required at least the following :
+
+Tag Handler : A tag handler is an object which implements a custom tag. To define a tag handler we have to use the  javax.servlet.jsp.tagext package. This package contains the classes and interfaces to implement the tag handler. A classic tag handler can implements either of the following interfaces :
+
+    Tag
+    IterationTag
+    BodyTag
+
+or can extends its base classes :
+
+    TagSupport
+    BodyTagSupport
+
+Methods of Tag handler are defined by the Tag and BodyTag interfaces.
+
+TagLibraryDescriptor (.tld) : It is a XML file into which information of whole library and each tag (contained in the library) are held. This xml file is accessed/used by the web server for tags validating and by the jsp page development tools. Extension of this file must be given as .tld and must be kept in the web-inf directory as /WEB-INF/fileName.tld. A TLD(.tld) file must be start with the taglib root element.
+
+Tag : It is an interface which defines a basic set of rule between tag handler and the class that implements the JSP page. It's life cycle and the other methods invoked at the start and end tag.
+
+There are some features for using the custom tag :
+
+    The first and very simple feature is it's reusability. Due to the reusability it decreases the web application development time.
+    In a JSP page all the available objects can be accessed by the custom tag.
+    Responses that are generated by the calling page can be changed (modified) by the custom tag.
+    It can be nested.
+    custom tags can be customized by passing the attributes from the calling page.
+
+-------------------------------------------------------------------------------------------------------------------------
+custom tag example
+------------------------------------------------
+package pack;
+
+import javax.servlet.jsp.tagext.TagSupport;
+import javax.servlet.jsp.JspWriter;
+
+public class SimpleTagHandler extends TagSupport
+{ 
+public int doStartTag()
+{
+JspWriter jw = pageContext.getOut();
+try
+{
+jw.println("<br>Body of doStartTag()");
+}
+catch(Exception e)
+{
+System.out.println(e);
+}
+return EVAL_BODY_INCLUDE;
+}
+public int doEndTag()
+{
+JspWriter jw = pageContext.getOut();
+try
+{
+jw.println("<br>Body of doEndTag()");
+}
+catch(Exception e)
+{
+System.out.println(e);
+}
+return EVAL_PAGE;
+}
+}
+---------------------------------------------------------------------
+customTagExample.jsp
+---------------------------------------
+
+<%@taglib uri="/WEB-INF/simpleTag.tld" prefix="dev" %>
+<html>
+<head>
+<title>simple custom tag example</title>
+</head>
+<body>
+<dev:mytag>
+<br><b>Body of JSP page</b>
+</dev:mytag>
+</body>
+</html>
+
+simpleTag.tld
+---------------------------------------------------
+<taglib>
+<tlib-version>1.0</tlib-version>
+<jsp-version>2.0</jsp-version>
+<tag>
+<name>mytag</name>
+<tag-class>pack.SimpleTagHandler</tag-class> 
+</tag>
+</taglib>
+
+-------------------end of custom tag  example----------------------------------------------
+second example of custom tag
+----------------------------------------
+Here I am giving a simple example which will demonstrate you how to use the attribute with custom tag. To do so at first I have created a tag handler class named SimpleTagHandler1.java which will receives the information from the custom tag at the time of request, then created a TLD file named simpleTag1.tld in WEB-INF directory using which the web container / web server will validate the tag, then created a JSP page at which used the <%@taglib> directive with attribute prefix 'attr' to create a custom tag and the uri="/WEB-INF/simpleTag1.tld" to give the custom tag's name and in the body of the jsp page created a custom tag using the prefix 'attr' and the name 'mytag1' with the attribute named str which value is "This is an attribute value", this value will be passed to the tag handler class and in tag handler class will first set this value using the setter method setStr() and return as a response using getter method getStr().
+
+SimpleTagHandler1.java
+
+package pack;
+
+import javax.servlet.jsp.tagext.TagSupport;
+import javax.servlet.jsp.JspWriter;
+
+public class SimpleTagHandler1 extends TagSupport
+{
+String str;
+public int doStartTag()
+{
+JspWriter jw = pageContext.getOut();
+try
+{
+if(str!=null)
+{
+jw.println("Body of doStartTag()<br>");
+jw.println(str);
+} 
+}
+catch(Exception e)
+{
+System.out.println(e);
+}
+return EVAL_BODY_INCLUDE;
+}
+public String getStr() {
+return str;
+}
+public void setStr(String str) {
+this.str = str;
+} 
+}
+
+----------------------------------------------------------------------------
+simpleTag1.tld
+
+<taglib>
+<tlib-version>1.0</tlib-version>
+<jsp-version>2.0</jsp-version>
+<tag>
+<name>mytag1</name>
+<tag-class>pack.SimpleTagHandler1</tag-class>
+<attribute>
+<name>str</name>
+</attribute> 
+</tag>
+</taglib>
+
+--------------------------------------------------------------------------------------------
+customTagAttributeExample.jsp
+
+<%@taglib uri="/WEB-INF/simpleTag1.tld" prefix="attr" %>
+<html>
+<head>
+<title>Custom tag Example with attribute</title>
+<body>
+<attr:mytag1 str="This is an attribute value"/>
+</body>
+</head>
+</html>
+
+-------------------------------------------------------------------------------------------
+Custom tag body
+-----------------------------------------------------------
+In this tutorial you will learn about the custom tag's body.
+
+Contents written between the opening and closing tags of an action element is called the body content of tag which will include in the output. Body contents can be manipulated by tag handler class and it can be simply validated by the tag and included to the output. for example :
+
+<dev:mytag>
+<br>Body of custom tag</b>
+</dev:mytag>
+
+Example :
+
+Here I am giving a simple example which will demonstrate you how to use the body of custom tag. To do so at first I have created a tag handler class named SimpleTagHandler2.java which will receives the information from the custom tag at the time of request, then created a TLD file named simpleTag2.tld in WEB-INF directory using which the web container / web server will validate the tag, then created a JSP page named customTagBodyExample.jsp.
+
+SimpleTagHandler2.java
+
+package pack;
+
+import javax.servlet.jsp.tagext.TagSupport;
+import javax.servlet.jsp.JspWriter;
+
+public class SimpleTagHandler2 extends TagSupport
+{
+String str;
+public int doStartTag()
+{
+return EVAL_BODY_INCLUDE;
+}
+public int doEndTag()
+{
+return EVAL_PAGE;
+}
+}
+
+----------------------------------------------------------------------------------------------------------------
+simpleTag2.tld
+
+<taglib>
+<tlib-version>1.0</tlib-version>
+<jsp-version>2.0</jsp-version>
+<tag>
+<name>mytag2</name>
+<tag-class>pack.SimpleTagHandler2</tag-class>
+</tag>
+</taglib>
+
+---------------------------------------------------------------------------------------------------------
+customTagBodyExample.jsp
+
+<%@taglib uri="/WEB-INF/simpleTag2.tld" prefix="dev" %>
+<html>
+<head>
+<title>Custom tag Example with body</title>
+<body>
+<dev:mytag2>
+<b>These contents are written in the body of Custom tag.</b>
+</dev:mytag2>
+</body>
+</head>
+</html>
+--------------------------------------------------------------------------------------------------------------------------
+
+Example :
+
+In the example given below you will see that the custom tag in jsp page is not containing any attribute or body. So when you will execute the jsp page there will nothing be displayed concern to custom tag written on jsp page there will only the body content of jsp page and tag handler class's doStartTag() content written in print() method be displayed.
+
+SimpleTagHandler3.java
+
+package pack;
+
+import javax.servlet.jsp.tagext.TagSupport;
+import javax.servlet.jsp.tagext.Tag;
+import javax.servlet.jsp.JspWriter;
+import javax.servlet.jsp.PageContext;
+
+public class SimpleTagHandler3 extends TagSupport {
+private Tag parent;
+
+public int doStartTag()
+{
+JspWriter out = pageContext.getOut();
+try
+{
+out.print("<br>Empty tag example");
+}
+catch (Exception e)
+{
+System.out.println(e);
+}
+return EVAL_BODY_INCLUDE;
+} 
+public int doEndTag()
+{
+return EVAL_PAGE;
+} 
+}
+
+--------------------------------------------------------------------------------------------------------------------
+simpleTag3.tld
+
+<taglib>
+<tlib-version>1.0</tlib-version>
+<jsp-version>2.0</jsp-version>
+<tag>
+<name>mytag3</name>
+<tag-class>pack.SimpleTagHandler3</tag-class>
+</tag>
+</taglib>
+
+----------------------------------------------------------------------------------------------------------------------
+customTagEmptyExample.jsp
+
+<%@taglib uri="/WEB-INF/simpleTag3.tld" prefix="dev" %>
+<html>
+<head>
+<title>Empty Custom tag Example</title>
+<body>
+<b>Body of JSP page</b>
+<br><b>doStartTag()........</b>
+<dev:mytag3></dev:mytag3>
+<br><b>doEndTag()</b>
+</body>
+</head>
+</html>
+
+----------------------------------------------------------------------------------------------------------------------
+
+Example :
+
+Here I am giving an example which will demonstrate you how to manipulate the body content using BodyTagSupport class. To achieve the solution of such problem at first I have created a tag handler class named TagHandlerBodyTag.java that extends a class BodyTagSupport. Then I have created a TLD file named bodyTagSupport.tld in WEB-INF directory using which the web container / web server will validate the tag, then created a JSP page named customTagBodyTagSupport.jsp.
+
+TagHandlerBodyTag.java
+
+package pack;
+import javax.servlet.jsp.tagext.*;
+import javax.servlet.jsp.*;
+
+public class TagHandlerBodyTag extends BodyTagSupport
+{
+protected BodyContent bodyContent;
+
+public int doStartTag()
+{
+return EVAL_BODY_BUFFERED; 
+}
+public int doEndTag()
+{
+try
+{
+bodyContent = getBodyContent();
+String str = bodyContent.getString();
+JspWriter out = bodyContent.getEnclosingWriter();
+if(str != null)
+{
+out.println("<br>"+str.toLowerCase()); 
+}
+} catch(Exception e)
+{
+System.out.println(e);
+}
+return EVAL_PAGE;
+} 
+}
+
+----------------------------------------------------------------
+bodyTagSupport.tld
+
+<taglib>
+<tlib-version>1.0</tlib-version>
+<jsp-version>2.0</jsp-version>
+<tag>
+<name>ascii</name>
+<tag-class>pack.TagHandlerBodyTag</tag-class>
+<bodycontent>JSP</bodycontent>
+</tag>
+</taglib>
+
+-----------------------------------------------------------------------
+customTagBodyTagSupport.jsp
+
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+pageEncoding="ISO-8859-1"%>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<%@ taglib uri="/WEB-INF/bodyTagSupport.tld" prefix="dev" %>
+<html>
+<head>
+<title>BodyTagSupport Example</title>
+</head>
+<body>
+<b>content of JSP page body....</b>
+
+<form action="">
+Enter characters in capital letter <input type="text" name="text"/>
+
+<%
+String str= request.getParameter("text");
+%>
+<input type="submit" value="submit"/>
+</form>
+<b>contents of custom tag body....</b>
+<dev:ascii>
+<%=num %>
+</dev:ascii>
+</body>
+</html>
+
+-----------------------------------------------------------
+Example :
+
+Here I am giving a simple example which will demonstrate you how to use the doEndTag() tag handler method and the constant integer values. To do so at first I have created a tag handler class named DoEndTagExample.java that extends the TagSupport class ( I have used here the TagSupport class to define a tag handler class because it is easy to use, you can use the Tag interface but if you will use this interface you will be required to implement all the methods defined in it ) here in this example I used only the doEndTag() method so in the tag handler class it will encountered when on the jsp page a closed custom tag will be evaluated or instantiated then I have created a TLD file named doEndTagExample.tld in WEB-INF directory using which the web container / web server will validate the tag, then created a JSP page named doEndTagExample.jsp.
+
+---------------------------------------------------------------------------------------------
+DoEndTagExample.java
+
+package pack;
+
+import javax.servlet.jsp.tagext.TagSupport;
+
+public class DoEndTagExample extends TagSupport
+{ 
+public int doEndTag()
+{
+return EVAL_PAGE;
+//return SKIP_PAGE;
+} 
+}
+
+---------------------------------------------------------------------------------
+doEndTagExample.tld
+
+<taglib>
+<tlib-version>1.0</tlib-version>
+<jsp-version>2.0</jsp-version>
+<tag>
+<name>doEnd</name>
+<tag-class>pack.DoEndTagExample</tag-class> 
+</tag>
+</taglib>
+
+--------------------------------------------------------------------------------------------------
+doEndTagExample.jsp
+
+<%@taglib uri="/WEB-INF/doEndTagExample.tld" prefix="dev" %>
+<html>
+<head>
+<title>doEndTag() Example</title>
+</head>
+<body>
+Jsp page content before the custom tag.
+<dev:doEnd />
+<br>Jsp page content after closing tag.
+</body>
+</html>
+-----------------------------------------------------------------------------------
+
+doAfterBody() IterationTag Example
+
+In this tutorial you will learn how to use doAfterBody() in jsp to handle custom tags.
+
+doAfterBody() method of IterationTag interface is used to control the reevaluation of tag body. Whether the body tag will be reevaluated or not is depend on the value it returns (discussed later). If there is no body evaluation this method will not be called by the jsp page implementation object. This function returns static final integer constant value on which it is depend that the body has to be reevaluated or not is as follows :
+
+    EVAL_BODY_AGAIN : This constant field is defined in IterationTag interface. If doAfterBody() method returns this value it means it request for evaluation of the body again.
+    SKIP_BODY : This constant field is defined in Tag interface and the IterationTag interface extends the Tag interface so this value can be inherited from the Tag interface and can be used easily. So when doAfterBody() method returns this value it means the body will be skipped i.e the body of tag will not be execute.
+
+Example :
+
+Here I am giving a simple example which will demonstrate you how to use the doAfterBody() tag handler method and the constant integer values. To do so at first I have created a tag handler class named DoAfterBodyExample.java that extends the BodyTagSupport class ( I have used here the BodyTagSupport class to define a tag handler class because it is easy to use, you can use the IterationTag interface but if you will use this interface you will be required to implement all the methods defined in it )
+
+DoAfterBodyExample.java
+
+package pack;
+import javax.servlet.jsp.tagext.*;
+import javax.servlet.jsp.*;
+
+public class DoAfterBodyExample extends BodyTagSupport
+{ 
+int count;
+
+
+public int getCount() {
+return count;
+}
+
+public void setCount(int count) {
+this.count = count;
+}
+
+public int doStartTag()
+{
+count = 1;
+return EVAL_BODY_INCLUDE;
+}
+
+public int doAfterBody() throws JspException
+{
+while (count < 3)
+{ 
+count++;
+return EVAL_BODY_AGAIN;
+}
+return SKIP_BODY; 
+}
+}
+-----------------------------------------------------------------------
+doAfterBodyExample.tld
+
+<taglib>
+<tlib-version>1.0</tlib-version>
+<jsp-version>2.0</jsp-version>
+<tag>
+<name>ascii</name>
+<!-- <tag-class>pack.TagHandlerBodyTag</tag-class> -->
+<tag-class>pack.DoAfterBodyExample</tag-class>
+<body-content>JSP</body-content>
+<attribute>
+<name>count</name>
+<required>true</required>
+</attribute>
+</tag>
+</taglib>
+
+--------------------------------------------------------------------------------------------------------
+doAfterBodyExample.jsp
+
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+pageEncoding="ISO-8859-1"%>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<%@ taglib uri="/WEB-INF/doAfterBodyExample.tld" prefix="dev" %>
+<html>
+<head>
+<title>doAfterBody() Example</title>
+</head>
+<body>
+<b>content of JSP page body....</b>
+
+<form action="">
+Enter Text <input type="text" name="text"/>
+
+<%
+String str= request.getParameter("text");
+%>
+<input type="submit" value="submit"/>
+</form>
+<b>contents of custom tag body....</b><br>
+<dev:ascii count="3">
+<%=str %>
+</dev:ascii>
+</body>
+</html>
+
+-----------------------------------------------------------------------------------------------------
