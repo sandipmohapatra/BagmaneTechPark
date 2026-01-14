@@ -2,7 +2,7 @@ https://github.com/sandipmohapatra/BagmaneTechPark
 ------------------------------------------------------------------------------------------
 
 Servlet API
-------------------------
+---------------------------------------------
 The javax.servlet and javax.servlet.http packages represent interfaces and classes for servlet api.
 Interfaces in javax.servlet package
 -----------------------------------------------
@@ -57,19 +57,19 @@ HttpSessionEvent
 
 SERVLET
 -----------------
-1)A servlet is a server side component.A servlet is a java programming language class used to extend the capabilities of servers that host application accessed via a request-response programming model.
+1)A servlet is a server side component. A servlet is a java programming language class used to extend the capabilities of servers that host application accessed via a request-response programming model.
 2)servlet are durable object they remain in memory and specially instructed to be destroyed .servlet will be loaded on the address space of webserver.
 
 What is servlet Container?
-The servlet container is a part of webserver (servlet and jsp)or application server(servlet,jsp,EJB) that provide the network service over which request and response.A servlet container also contains and manages servlet through their life cycle.
+The servlet container is a part of webserver (servlet and jsp)or application server(servlet,jsp,EJB) that provide the network service over which request and response. A servlet container also contains and manages servlet through their life cycle.
 A servlet container can also be built into a host web server and installed as an add-on component to webserver.
 
 Types of servlets:-
-------------------------
+-----------------------------------
 1)generic servlet are protocal independent.
 2)Http servlet are protocal specific they can be invoke only with the http protocol.
 
-when implementing a generic service we must extend GenericServlet class which provides the java servlet api.
+When implementing a generic service we must extend GenericServlet class which provides the java servlet api.
 
 when implementing a http service we must extends HttpServlet class which provides methods such as doGet and doPost.
 
@@ -78,8 +78,8 @@ two packages required to build servlet
 2)javax.servlet.http
 
 Life cycle of servlet:-
-----------------------------
-1)init():-server invokes init() when servlet is first loaded into the webserver memory.This method is used to initialize new servlet instance.Return type is void.
+-------------------------------------------
+1)init():-server invokes init() when servlet is first loaded into the webserver memory. This method is used to initialize new servlet instance. Return type is void.
 
 2)getServletConfig():- Return type is servlet config.
 
@@ -93,7 +93,7 @@ What is servletContext?
 Servlet context is a part of javax.servlet.*;
 Servlet context is also called as application object.
 Servlet context is used to obtain the information about environment on which servlet is running.
-For every web-application the web-container needs the deployment descripter .if there is no error the web Container will create servletContext object for the application.There may be multiple servlet context object inside a web Container.
+For every web-application the web-container needs the deployment descriptor .if there is no error the web Container will create servletContext object for the application. There may be multiple servlet context object inside a web Container.
 
 Servlet context is one per one web application .To communicate with servlet Conatiner we use ServletContext object.
 
@@ -102,7 +102,7 @@ Methods inside ServletContext interface are
 2)void setAttribute(String name)
 3)Object getAttribute()
 
-In servlet application setAttribute() method is used to create java object.If any object previously present it overrides that object.
+In servlet application setAttribute() method is used to create java object. If any object previously present it overrides that object.
 To get the object stored in the request object we use request.getAttribute();
 Request.removeAttribute() is use to remove attribute from request Object.
 
@@ -143,7 +143,7 @@ Servlet Filters:-
 4)destroy():-Removes a filter from service.
 
 use of filter:-
----------------
+------------------------------
 1)securing application
 2)help to safe guard the data.
 
@@ -160,3 +160,50 @@ Uses:-
 1)to keep the track of no of concurrent clients using a web application.
 2)database need to be loaded on startup and saved while shut down.
 -------------------------------------------------------------------------------------------------------------
+Difference between Generic servlet and HttpServlet
+----------------------------------------------------------------------
+1. GenericServlet
+
+Package: javax.servlet
+Protocol: Protocol-independent (can work with any protocol)
+
+It is an abstract class.
+Can handle any type of request, not limited to HTTP.
+You must override only one method:
+public void service(ServletRequest request, ServletResponse response)
+-----------------------------------------------------------------------------------------------------------------------------
+Example
+import javax.servlet.*;
+
+public class MyGenericServlet extends GenericServlet {
+    @Override
+    public void service(ServletRequest req, ServletResponse res)
+            throws ServletException, IOException {
+        res.getWriter().println("Hello from GenericServlet");
+    }
+}
+--------------------------------------------------------------------------------------------------------------------------
+2. HttpServlet
+
+Package: javax.servlet.http
+It is an abstract subclass of GenericServlet.
+
+Designed specifically for HTTP.
+
+Provides methods like:
+
+doGet(),doPost(),doPut(),doDelete()
+
+-----------------------------------------------------------------------------------------------------------
+Example
+import javax.servlet.http.*;
+import javax.servlet.*;
+
+public class MyHttpServlet extends HttpServlet {
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp)
+            throws ServletException, IOException {
+        resp.getWriter().println("Hello from HttpServlet");
+    }
+}
+--------------------------------------------------------------------------------------------------------------
