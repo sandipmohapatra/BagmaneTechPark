@@ -1,0 +1,64 @@
+Hidden Fields
+---------------------------------------------
+<form action="FirstServlet" method="get">
+Name:<input type="text" name="uname"/><br/>
+<input type="submit" value="Submit"/>
+</form>
+
+----------------------------------------------------------------------
+import java.io.*;
+import javax.servlet.*;
+import javax.servlet.http.*;
+import javax.servlet.annotation.*;
+@WebServlet("/FirstServlet")
+public class FirstServlet extends HttpServlet {
+
+public void doGet(HttpServletRequest request, HttpServletResponse response){
+		try{
+
+		response.setContentType("text/html");
+		PrintWriter out = response.getWriter();
+		
+		String n=request.getParameter("uname");
+		out.print("Welcome "+n);
+		
+		//creating form that have invisible textfield
+		out.print("<form action='SecondServlet'>");
+		out.print("<input type='hidden' name='uname' value='"+n+"'>");
+		out.print("<input type='submit' value='Submit'>");
+		out.print("</form>");
+		
+		out.close();
+
+                }catch(Exception e){System.out.println(e);}
+	}
+
+}
+
+----------------------------------------------------------
+import java.io.*;
+import javax.servlet.*;
+import javax.servlet.http.*;
+import javax.servlet.annotation.*;
+@WebServlet("/SecondServlet")
+
+public class SecondServlet extends HttpServlet {
+
+public void doGet(HttpServletRequest request, HttpServletResponse response){
+		try{
+
+		response.setContentType("text/html");
+		PrintWriter out = response.getWriter();
+		
+		//Getting the value from the hidden field
+		String x=request.getParameter("uname");
+		out.print("Hello "+x);
+
+		out.close();
+
+                }catch(Exception e){System.out.println(e);}
+	}
+	
+
+}
+-------------------------------------------------------------------------
