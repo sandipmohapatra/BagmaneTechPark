@@ -1,0 +1,108 @@
+<html>
+<body bgcolor=yellow method=get>
+<form action=second>
+<h1>STUDENT REGISTRATION PAGE</h1><hr color="red">
+<table>
+<tr><td>Enter your idno</td><td><input type=text name=t1 size=20></td></tr>
+<tr><td>Enter your name</td><td><input type=text name=t2 size=20></td></tr>
+<tr><td>Enter your address</td><td><input type=text name=t3 size=20></td></tr>
+<tr><td>Enter your Email</td><td><input type=text name=t4 size=20></td></tr>
+<tr><td>Enter your Phoneno</td><td><input type=text name=t5 size=20></td></tr>
+<tr><td><td><input type=submit value=insert name=b1 ><input type=submit value=update name=b1 >
+<input type=submit value=delete name=b1 ><input type=submit value=select name=b1 >
+
+</td></tr>
+</table>
+</form>
+</body>
+</html>
+--------------------------------------------------------------------------------------------------------------
+import java.io.*;
+import java.sql.*;
+import javax.servlet.*;
+import javax.servlet.annotation.WebServlet;
+
+@WebServlet("/second")
+public class second extends GenericServlet 
+{
+public void init()
+{
+	System.out.println("This is init execute for one time");
+}
+	@Override
+	public void service(ServletRequest req, ServletResponse res) throws ServletException, IOException 
+	{
+		res.setContentType("text/html");
+        PrintWriter out = res.getWriter();
+        String a=req.getParameter("t1");
+        String b=req.getParameter("t2");
+        String c=req.getParameter("t3");
+        String d=req.getParameter("t4");
+        String e=req.getParameter("t5");
+        String f=req.getParameter("b1");
+        try{
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            Connection con=DriverManager.getConnection( "jdbc:mysql://localhost:3306/bagmaneTechPark","root","1234");
+        
+       if(f.equals("insert"))
+       {
+            PreparedStatement ps=con.prepareStatement("insert into student values(?,?,?,?,?)");
+            int x=Integer.parseInt(a);
+            ps.setInt(1,x);
+            ps.setString(2,b);
+            ps.setString(3,c);
+            ps.setString(4,d);
+            ps.setString(5,e);
+            ps.execute();
+       out.println("Row inserted");     
+       }
+       
+       else if(f.equals("update"))
+       {
+            PreparedStatement ps=con.prepareStatement("update student set name=?,address=?,email=?,phoneno=? where idno=?");
+            int x=Integer.parseInt(a);
+            
+            ps.setString(1,b);
+            ps.setString(2,c);
+            ps.setString(3,d);
+            ps.setString(4,e);
+            ps.setInt(5,x);
+            ps.execute();
+       out.println("Row update");     
+       }
+       else if(f.equals("delete"))
+       {
+            PreparedStatement ps=con.prepareStatement("delete from student where idno=?");
+            int x=Integer.parseInt(a);
+            ps.setInt(1,x);
+            ps.execute();
+       out.println("Row deleted");     
+       }
+       else
+       {
+    	       PreparedStatement ps=con.prepareStatement("select * from student");
+                ResultSet rs=ps.executeQuery();
+                out.println("<table border=1>");
+                out.println("<tr><th>Idno<th>Name<th>Address<th>Email<th>Phone no</tr>");
+                
+              while(rs.next())
+              {
+     	  out.println("<tr><td>"+rs.getInt(1)+"<td>"+rs.getString(2)+"<td>"+rs.getString(3)+"<td> "+rs.getString(4)+"<td> "+rs.getString(5)+"</tr>");
+              }
+              out.println("</table>");
+          
+           }
+       
+                        }
+            catch(Exception ae)
+            {
+            	ae.printStackTrace();
+            }
+                
+	}
+	public void destroy()
+	{
+		System.out.println("This is destroy execute for one time");
+	}
+}
+-----------------------------------------------------------------------------------
