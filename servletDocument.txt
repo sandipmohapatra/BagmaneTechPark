@@ -109,7 +109,7 @@ Request.removeAttribute() is use to remove attribute from request Object.
 HTTP Servlet:-
 -----------------------
 1)SendRedirect() :-we can redirect the browser to a resource part of the same application.
-we can redirect another web application running through the same web container.
+we can redirec t another web application running through the same web container.
 2)RequestDispatcher :-
 it is an interface inside javax.servlet.*;
 it contains two methods :-
@@ -207,3 +207,152 @@ public class MyHttpServlet extends HttpServlet {
     }
 }
 --------------------------------------------------------------------------------------------------------------
+In Servlets, a Listener is a Java class that listens to events happening in the web application lifecycle and reacts automatically when those events occur.
+
+A Servlet Listener is used to:
+___________________________________
+Track application startup/shutdown
+Track session creation/destruction
+Track request lifecycle
+Track attribute changes in application, session, or request scope
+
+Types of Servlet Listeners
+1. ServletContextListener
+Listens to application lifecycle events
+Events
+Application starts
+Application stops
+Use cases
+
+Load configuration
+Create DB connections
+Initialize caches
+
+@WebListener
+public class AppContextListener implements ServletContextListener {
+
+    public void contextInitialized(ServletContextEvent sce) {
+        System.out.println("Application Started");
+    }
+
+    public void contextDestroyed(ServletContextEvent sce) {
+        System.out.println("Application Stopped");
+    }
+}
+-----------------------------------------------------------------------------------------------------------
+2. HttpSessionListener
+
+Listens to session lifecycle events
+Events
+Session created
+Session destroyed
+Use cases
+Count active users
+Cleanup session resources
+
+@WebListener
+public class SessionListener implements HttpSessionListener {
+
+    public void sessionCreated(HttpSessionEvent se) {
+        System.out.println("Session Created: " + se.getSession().getId());
+    }
+
+    public void sessionDestroyed(HttpSessionEvent se) {
+        System.out.println("Session Destroyed");
+    }
+}
+---------------------------------------------------------------------------------------------------
+3. ServletRequestListener
+
+Listens to request lifecycle events
+Events
+Request initialized
+Request destroyed
+Use cases
+Request logging
+Performance tracking
+
+@WebListener
+public class RequestListener implements ServletRequestListener {
+
+    public void requestInitialized(ServletRequestEvent sre) {
+        System.out.println("Request Started");
+    }
+
+    public void requestDestroyed(ServletRequestEvent sre) {
+        System.out.println("Request Ended");
+    }
+}
+---------------------------------------------------------------------------------------------------------------
+Attribute Listeners (Change Tracking)
+
+4. ServletContextAttributeListener
+Tracks application-scope attribute changes
+
+5. HttpSessionAttributeListener
+Tracks session-scope attribute changes
+
+6. ServletRequestAttributeListener
+Tracks request-scope attribute changes
+
+Example:
+
+public void attributeAdded(HttpSessionBindingEvent event) {
+    System.out.println("Attribute added: " + event.getName());
+}
+------------------------------------------------------------------------------------------
+How to Configure a Listener
+-----------------------------------------------------------------------------------------
+Option 1: Using Annotation (Recommended)
+@WebListener
+public class MyListener implements ServletContextListener {
+}
+---------------------------------------------------------------------------------------------
+Option 2: Using web.xml
+<listener>
+    <listener-class>com.example.MyListener</listener-class>
+</listener>
+------------------------------------------------------------------------------------------
+
+
+Servlet Filter
+------------------------------------
+A Servlet Filter is a Java class that intercepts HTTP requests and responses before they reach a servlet and/or before the response is sent back to the client.
+
+Servlet Filter Life Cycle
+init() – called once when filter is created
+doFilter() – called for every request/response
+destroy() – called when filter is removed
+
+public class MyFilter implements Filter {
+
+    public void init(FilterConfig config) {
+        System.out.println("Filter initialized");
+    }
+
+    public void doFilter(ServletRequest request, 
+                         ServletResponse response, 
+                         FilterChain chain)
+                         throws IOException, ServletException {
+
+        System.out.println("Before Servlet");
+
+        chain.doFilter(request, response); // pass request to servlet
+
+        System.out.println("After Servlet");
+    }
+
+    public void destroy() {
+        System.out.println("Filter destroyed");
+    }
+}
+
+Common Uses of Servlet Filters
+
+✔ Authentication & Authorization
+✔ Logging & Auditing
+✔ Input validation
+✔ Data compression
+✔ Performance monitoring
+
+------------------------------------------------------------------------------------------------------------------
