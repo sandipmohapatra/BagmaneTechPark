@@ -77,18 +77,19 @@ two packages required to build servlet
 1)javax.servlet
 2)javax.servlet.http
 
-Life cycle of servlet:-
+Life cycle of Generic servlet:-
 -------------------------------------------
 1)init():-server invokes init() when servlet is first loaded into the webserver memory. This method is used to initialize new servlet instance. Return type is void.
-
-2)getServletConfig():- Return type is servlet config.
-
-3)service():-To activate the servlet instance to handle the client request.
-
-4)getServletInfo():-Return String.
-
-5)destroy():-It is called by the webserver to destroy the existing servlet instance,or clean up any resource the servlet is consuming.
+2)service():-To activate the servlet instance to handle the client request.
+3)destroy():-It is called by the webserver to destroy the existing servlet instance,or clean up any resource the servlet is consuming.
 ------------------------------------------------------------------------------------
+Life cycle of HTTP servlet:-
+-------------------------------------------
+1)init():-server invokes init() when servlet is first loaded into the webserver memory. This method is used to initialize new servlet instance. Return type is void.
+2)service()/doGet()/doPost():-To activate the servlet instance to handle the client request.
+3)destroy():-It is called by the webserver to destroy the existing servlet instance,or clean up any resource the servlet is consuming.
+------------------------------------------------------------------------------------
+
 What is servletContext?
 Servlet context is a part of javax.servlet.*;
 Servlet context is also called as application object.
