@@ -1,0 +1,215 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Travel and Living, Free XHTML CSS Template</title>
+<meta name="keywords" content="Travel and Living, Free XHTML CSS Template, Web Design" />
+<meta name="description" content="Travel and Living - Free XHTML CSS Template provided by TemplateMo.com" />
+<link href="templatemo_style.css" rel="stylesheet" type="text/css" />
+<script language="javascript" type="text/javascript">
+function clearText(field)
+{
+    if (field.defaultValue == field.value) field.value = '';
+    else if (field.value == '') field.value = field.defaultValue;
+}
+ 
+function alpha(e)
+{
+var k;
+document.all ?  k = e.keycode : k = e.which;
+return ((k > 64 && k < 91) || (k > 96 && k < 123) || (k == 8) || (k == 46));
+}
+
+function fun()
+{
+   var t1=f1.t1.value;
+  var t2=f1.t2.value;
+ var t3=f1.t3.value;
+   var t4=f1.t4.value;
+ var t5=f1.t5.value;
+ var t6=f1.t6.value;
+  
+   if(t1=="")
+   {
+   alert("name is empty");
+   f1.t1.focus();
+   }
+  else if(t2=="")
+   {
+   alert("address is empty");
+   f1.t2.focus();
+   }
+    else if(t3=="")
+   {
+   alert("Email is empty");
+   f1.t3.focus();
+   }
+else if(t4=="")
+   {
+   alert("Phone no is empty");
+   f1.t4.focus();
+   }
+else if (isNaN(t4)) //is not a number
+{
+alert("Please Enter a Number");
+ f1.t4.focus();
+  }
+else if(t4.length!=10)
+ {
+alert("Please give 10 digits only");
+ f1.t4.focus();
+}  
+
+else if(t5=="")
+   {
+   alert("State is empty");
+   f1.t5.focus();
+   }
+else if(t6=="")
+   {
+   alert("city is empty");
+   f1.t6.focus();
+   }
+ 
+  else
+   {
+    alert("data submited successfully");
+f1.submit();
+   }
+   }
+</script>
+ 
+</head>
+<body>
+<div id="templatemo_container">
+    <div id="templatemo_banner">
+   	  <div id="search_section">
+            <form action="agent" method="get" name=f1>
+                
+           
+      </div> 
+    </div>
+    <div id="templatemo_menu">
+        <ul>
+            <li><a href="E-TOUR.html" class="current">Home</a></li>
+	   
+	<li><a href="Accomodations.html">Accommodations</a></li>
+                        <li><a href="Gallery.html">Gallery</a></li>
+	<li><a href="Destinations.html">FeedBack</a></li> 
+	<li><a href="Agent.html">Agent Registeration</a></li> 
+      
+ 	<li><a href="Admin.html">Admin</a></li>
+            <li><a href="Contact.html" class="last">Contact</a></li>
+   
+
+        </ul>    		
+    </div> <!-- end of menu -->
+    
+  <div id="templatemo_content">
+<div class="section_w430 fl margin_right_40">
+  
+<img src="images\images.jpg" alt="image" height=210 width=400  />
+                        
+<div class="margin_bottom_30"></div>
+<br><br><br>        
+            <div class="header_01">Agent Registration Details</div>
+        
+<li><label>Agent Name:</label><input type="text" name="t1" size=27 onkeypress="return alpha(event)"/></li><br>
+<li><label>Agent Address:</label><input type="text" name="t2" size=24/></li><br>	
+<li><label>Emailid:</label><input type="text" name="t3" size=24/></li><br>	
+<li><label>MobNum:</label><input type="text" name="t4" size=22/></li><br>	
+<li><label>State:</label><input type="text" name="t5" size=32/></li><br>	
+<li><label>City:</label><input type="text" name="t6" size=33/></li><br>	
+<center><input type=button value=Submit onClick=fun()>
+
+
+		<div class="rc_btn_02"><a href="#">Thank you for selecting us</a></div>
+ 
+	       	<div class="cleaner"></div>         
+        </div>
+        
+        <div class="section_w320 fl">
+        	
+           <div class="header_01">Tour Guides</div>
+            
+         
+            <div></div><li> Abdul Razack
+ <div></div><li> Pooja Singh
+ <div></div><li> Mohammed Muzammil
+            
+          <div class="margin_bottom_40"></div>
+        
+        </div>
+        
+        
+<div class="section_w320_with_bg fl">
+        	<div class="section_w320_with_bg_top"></div>
+            
+	  <div class="header_02">New Destinations</div>
+            
+             <div class="new_destination">
+            	<div class="img_wrapper">
+                	<img src="images/Mysore_Palace,_India_(photo_-_Jim_Ankan_Deka).jpg" alt="image" />
+                </div>
+                <div class="text">
+                		<div class="header_03">Mysore</div>
+                	<p>Special Offer This Summer ,Visit Mysore-2 Day and 3Night Stay, BreakFast Complimentry <a href="#">Rs 5000 per Person</a></p>
+                </div>
+            </div>
+            
+            <div class="margin_bottom_30"></div>
+            
+            <div class="new_destination">
+            	<div class="img_wrapper">
+                	<img src="images/ig.jpg" alt="image" />
+                </div>
+                <div class="text">
+                <div class="header_03">Delhi</div>
+                		<p>Special Offer This Summer ,Visit NewDelhi-2 Day and 3Night Stay , BreakFast Complimentry <a href="#">Rs 7000 per Person</a></p>
+                </div>
+            </div>
+            
+            <div class="margin_bottom_30"></div>
+            
+            <div class="new_destination">
+            	<div class="img_wrapper">
+                	<img src="images/gang.jpg" alt="image" />
+                </div>
+                <div class="text">
+           <div class="header_03">Agra</div>
+                		<p>Special Offer This Summer ,Visit Taj Mahal-2 Day and 3Night Stay , BreakFast Complimentry <a href="#">Rs 10000 per Person</a></p>
+                </div>
+            </div>
+            
+            <div class="margin_bottom_30"></div>
+            
+            <div class="new_destination">
+            	<div class="img_wrapper">
+               	  <img src="images/gang1.jpg" alt="image" />
+                </div>
+                <div class="text">
+                		<div class="header_03">Manali</div>
+                	<p>Special Offer This Summer ,Visit Himachal Pradesh-2 Day and 3Night Stay , BreakFast Complimentry <a href="#">Rs 6000 per Person</a></p>
+                </div>
+</div>
+            
+            <div class="section_w320_with_bg_bottom"></div>        
+    </div> <!-- end of section w320 -->
+
+    <div class="cleaner"></div> 
+    </div> <!-- end of content -->
+    
+    <div id="templatemo_footer">
+    
+    	<ul class="footer_list">
+            <li><a href="#">Home</a></li>
+            <li><a href="#">Services</a></li>
+            <li><a href="#">Destinations</a></li>
+            <li><a href="#">About Us</a></li>
+            <li class="last"><a href="#">Contact Us</a></li>
+        </ul> 
+        
+        </div>
+</body>
+ </form>
+</html>

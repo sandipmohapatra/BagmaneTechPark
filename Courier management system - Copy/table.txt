@@ -1,0 +1,17 @@
+drop table register;
+drop table contact;
+drop table feedback;
+
+
+create table register(t1 varchar2(50),t2 varchar2(50) ,t3 varchar2(50),t4 varchar2(50),t5 varchar2(50),t6 varchar2(50));
+
+
+create table contact(t1 varchar2(50),t2 varchar2(50) ,t3 varchar2(50),t4 varchar2(50),t5 varchar2(50),t6 varchar2(50));
+
+
+create table feedback(t1 varchar2(50),t2 varchar2(50) ,t3 varchar2(50),t4 varchar2(50),t5 varchar2(50),t6 varchar2(50));
+
+create table bill
+
+
+create table track
